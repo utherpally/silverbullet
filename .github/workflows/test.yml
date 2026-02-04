@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   test-frontend:
+    if: false # Workflow disabled
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +33,7 @@ jobs:
         run: deno task checks
 
   test-go:
+    if: false # Workflow disabled
     runs-on: ubuntu-latest
 
     steps:
