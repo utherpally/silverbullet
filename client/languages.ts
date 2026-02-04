@@ -51,6 +51,7 @@ import {
 import { cssLanguage } from "@codemirror/lang-css";
 import { nixLanguage } from "@replit/codemirror-lang-nix";
 import { luaLanguage } from "./space_lua/parse.ts";
+import { zigLanguage } from "./codemirror/legacy-modes/mode/zig.ts";
 
 const yamlStreamLanguage = StreamLanguage.define(yamlLanguage);
 
@@ -123,6 +124,7 @@ export const builtinLanguages: Record<string, Language> = {
   "nix": nixLanguage,
   "space-lua": luaLanguage,
   "lua": luaLanguage,
+  "zig": StreamLanguage.define(zigLanguage),
 };
 
 export function languageFor(name: string): Language | null {
