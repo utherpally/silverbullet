@@ -273,7 +273,7 @@ function tokenMultilineString(stream: any, state: any) {
   return "string";
 }
 
-const zigLanguage: StreamParser<{tokenize: any}> = {
+export const zigLanguage: StreamParser<{tokenize: any}> = {
   name: "zig",
   
   startState: function() {
