@@ -6,6 +6,7 @@ on:
       - "*"
 jobs:
   release:
+    if: false # Workflow disabled
     runs-on: ubuntu-latest
     permissions:
       contents: write
