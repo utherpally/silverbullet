@@ -25,21 +25,32 @@ Deno.test("[Lua] Core language (arithmetic)", async () => {
   await runLuaTest("./arithmetic_test.lua");
 });
 
+Deno.test("[Lua] Core language (metamethods)", async () => {
+  await runLuaTest("./metamethods_test.lua");
+});
+
 Deno.test("[Lua] Load tests", async () => {
   await runLuaTest("./stdlib/load_test.lua");
 });
 
-Deno.test("[Lua] Table tests", async () => {
-  await runLuaTest("./stdlib/table_test.lua");
+Deno.test("[Lua] Core language (length)", async () => {
+  await runLuaTest("./len_test.lua");
+});
+
+Deno.test("[Lua] Format tests", async () => {
+  await runLuaTest("./stdlib/format_test.lua");
 });
 
 Deno.test("[Lua] String to number tests", async () => {
   await runLuaTest("./tonumber_test.lua");
 });
 
+Deno.test("[Lua] Pattern tests", async () => {
+  await runLuaTest("./stdlib/pattern_test.lua");
+});
+
 Deno.test("[Lua] String tests", async () => {
   await runLuaTest("./stdlib/string_test.lua");
-  // await runLuaTest("./stdlib/string_test2.lua");
 });
 
 Deno.test("[Lua] Space Lua tests", async () => {
