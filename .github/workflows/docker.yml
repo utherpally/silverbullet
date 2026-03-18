@@ -16,6 +16,7 @@ env:
   NAMESPACE_DOCKER: zefhemel
 jobs:
   docker-main:
+    if: false
     runs-on: ubuntu-latest
 
     steps:
