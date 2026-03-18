@@ -1,0 +1,60 @@
+# Stage 1: Build the silverbullet binary
+FROM node:24.13.0-bookworm AS builder
+RUN apt update && apt install -y git wget make
+
+ARG TARGETARCH
+ENV GO_VERSION=1.25.1
+
+# Install Go
+RUN set -e; actual_arch=${TARGETARCH:-$(dpkg --print-architecture)}; wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-${actual_arch}.tar.gz"; tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-${actual_arch}.tar.gz"; rm "/tmp/go${GO_VERSION}.linux-${actual_arch}.tar.gz"
+
+ENV GOPATH=/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+
+WORKDIR /app
+ADD . /app
+
+# Install npm dependencies
+RUN npm ci
+
+# Build the `silverbullet` self-contained binary in /app/silverbullet
+RUN make build
+
+# Stage 2: Create the runtime from the build
+FROM debian:bookworm-slim
+
+# The volume that will keep the space data
+VOLUME /space
+
+# Either create a volume:
+#   docker volume create myspace
+# Then bind-mount it when running the container with the -v flag, e.g.:
+#   docker run -v myspace:/space -p3000:3000 -it ghcr.io/silverbulletmd/silverbullet
+# Or simply mount an existing folder into the container:
+#   docker run -v /path/to/my/folder:/space -p3000:3000 -it ghcr.io/silverbulletmd/silverbullet
+
+RUN apt-get update && apt-get install -y --no-install-recommends git curl bash tini chromium && rm -rf /var/lib/apt/lists/*
+
+# For runtime API
+ENV CHROMIUM_PATH=/usr/bin/chromium
+
+HEALTHCHECK CMD curl --fail http://localhost:$SB_PORT$SB_URL_PREFIX/.ping || exit 1
+
+# Expose port 3000
+# Port map this when running, e.g. with -p 3002:3000 (where 3002 is the host port)
+EXPOSE 3000
+
+# Always binding to this IP, otherwise the server wouldn't be available
+ENV SB_HOSTNAME=0.0.0.0
+ENV SB_FOLDER=/space
+ENV SB_PORT=3000
+
+# As well as the docker-entrypoint.sh script
+ADD ./docker-entrypoint.sh /docker-entrypoint.sh
+
+# Copy the bundled version of silverbullet into the container
+COPY --from=builder /app/silverbullet /silverbullet
+
+# Run the server, allowing to pass in additional argument at run time, e.g.
+#   docker run -p 3002:3000 -v myspace:/space -it ghcr.io/silverbulletmd/silverbullet --user me:letmein
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
