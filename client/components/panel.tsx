@@ -112,7 +112,10 @@ function IFramePanel({
         srcDoc={html}
         ref={iFrameRef}
         style={{ visibility: "hidden" }}
-        onLoad={() => (iFrameRef.current!.style.visibility = "visible")}
+        onLoad={() => {
+          iFrameRef.current!.style.visibility = "visible";
+          iFrameRef.current!.focus();
+        }}
       />
     </div>
   );
