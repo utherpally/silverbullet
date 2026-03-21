@@ -17,6 +17,7 @@ const alwaysProxy = [
   "/.config",
   "/.logs",
   "/.proxy",
+  "/.runtime",
 ];
 
 export type ProxyRouterEvents = {
